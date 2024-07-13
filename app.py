@@ -2,16 +2,16 @@ from flask import Flask, request, jsonify , render_template , redirect , url_for
 from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__ , template_folder='templates')
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:@localhost/todo'
-db = SQLAlchemy(app)
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:@localhost/todo'
+# db = SQLAlchemy(app)
 
-class tasks(db.Model):
-    task_id = db.Column(db.Integer, primary_key=True)
-    task_name = db.Column(db.String(100), nullable=False)
-    description = db.Column(db.Text, nullable=True)
-    due_date = db.Column(db.DateTime, nullable=True)
-    created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
-    updated_at = db.Column(db.DateTime, default=db.func.current_timestamp(), onupdate=db.func.current_timestamp())
+# class tasks(db.Model):
+#     task_id = db.Column(db.Integer, primary_key=True)
+#     task_name = db.Column(db.String(100), nullable=False)
+#     description = db.Column(db.Text, nullable=True)
+#     due_date = db.Column(db.DateTime, nullable=True)
+#     created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
+#     updated_at = db.Column(db.DateTime, default=db.func.current_timestamp(), onupdate=db.func.current_timestamp())
 
 @app.route('/')
 def index():
