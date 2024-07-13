@@ -15,7 +15,8 @@ class tasks(db.Model):
 
 @app.route('/')
 def index():
-    return render_template('index.html' , tasks = tasks.query.all())
+    # return render_template('index.html' , tasks = tasks.query.all())
+    return render_template('index.html')
 
 # @app.route('/add', methods=['POST'])
 # def add():
