@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todo App</title>
+    <!-- Include Tailwind CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+
+<body class="bg-gray-100">
+    <div class="container mx-auto px-4 py-8">
+        <h1 class="text-3xl font-semibold text-center mb-4">Todo List</h1>
+        <!-- Todo List -->
+        <div class="bg-white shadow-md rounded-lg overflow-hidden items-center">
+            <form action="/add" method="POST">
+                <div class="flex items-center border px-4 py-3">
+                    <input type="text" placeholder="task name" name="name" class="form-input flex-1 px-2 py-1 mr-2" required>
+                </div>
+                <div class="flex items-center border px-4 py-3">
+                    <input type="text" placeholder="task description" name="description" class="form-input flex-1 px-2 py-1 mr-2" required>
+                </div>
+                <div class="flex items-center border px-4 py-3">
+                    <input type="date" placeholder="Due Date" name="due_date" class="form-input flex-1 px-2 py-1 mr-2" required>
+                </div>
+                <div class="w-full p-4 mx-auto text-center">
+                    <input type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800" value="Add Task">
+                </div>
+            </form>
+        </div>
+        <div class="mt-5 bg-white shadow-md rounded-lg overflow-hidden items-center">
+            <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+                <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                    <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                        <tr class="bg-blue-600 text-white">
+                            <th scope="col" class="px-6 py-3">
+                                ID
+                            </th>
+                            <th scope="col" class="px-6 py-3">
+                                Name
+                            </th>
+                            <th scope="col" class="px-6 py-3">
+                                Description
+                            </th>
+                            <th scope="col" class="px-6 py-3">
+                                Action
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if not tasks %}
+                            <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                                <td class="px-6 py-4 text-center" colspan="4">
+                                    No tasks found
+                                </td>
+                            </tr>
+                        {% else %}
+                        {% for task in tasks %}
+                        <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                            <td class="px-6 py-4">
+                                {{ loop.index }}
+                            </td>
+                            <td class="px-6 py-4">
+                                {{ task.task_name }}
+                            </td>
+                            <td class="px-6 py-4">
+                                {{ task.description }}
+                            </td>
+                            <td class="px-6 py-4 flex gap-1">
+                                <!-- Delete Task Form -->
+                                <form action="{{ url_for('delete_task') }}" method="post" onsubmit="return confirm('Are you sure you want to delete this task?');">
+                                    <input type="hidden" name="task_id" value="{{ task.task_id }}">
+                                    <input type="hidden" name="_method" value="DELETE">
+                                    <button type="submit" class="text-black hover:text-white border border-black hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-3 py-2 text-center me-2 mb-2 dark:border-black-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-500 dark:focus:ring-blue-800">Delete</button>
+                                </form>
+                                <form action="{{ url_for('edit_task', task_id=task.task_id) }}" method="get">
+                                    <input type="hidden" name="task_id" value="{{ task.task_id }}">
+                                    <button type="submit" class="text-black hover:text-white border border-black hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-3 py-2 text-center me-2 mb-2 dark:border-black-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-500 dark:focus:ring-blue-800">Edit</button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+            
+            
+
+        </div>
+    </div>
+    {% include 'footer.html' %}
+</body>
+
+</html>
