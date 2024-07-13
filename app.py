@@ -17,40 +17,39 @@ class tasks(db.Model):
 def index():
     return render_template('index.html' , tasks = tasks.query.all())
 
-@app.route('/add', methods=['POST'])
-def add():
-    task_name = request.form['name']
-    description = request.form['description']
-    due_date = request.form['due_date']
-    new_task = tasks(task_name=task_name, description=description , due_date=due_date)
-    db.session.add(new_task)
-    db.session.commit()
-    return redirect(url_for('index'))
-@app.route('/delete', methods=['POST'])
-def delete_task():
-    if request.form['_method'] == 'DELETE':
-        task_id = request.form['task_id']
-        task = tasks.query.filter_by(task_id=task_id).first()
-        db.session.delete(task)
-        db.session.commit()
-    return redirect(url_for('index'))
-@app.route('/edit/<int:task_id>', methods=['GET'])
-def edit_task(task_id):
-    task = tasks.query.filter_by(task_id=task_id).first()
-    if task:
-        return render_template('edit.html', task=task)
-    else:
-        return redirect(url_for('index'))
-@app.route('/update/<int:task_id>', methods=['POST'])
-def update_task(task_id):
-    task = tasks.query.filter_by(task_id=task_id).first()
-    if task:
-        task.task_name = request.form['task_name']
-        task.description = request.form['description']
-        task.due_date = request.form['due_date']
-        db.session.commit()
-    return redirect(url_for('index'))
+# @app.route('/add', methods=['POST'])
+# def add():
+#     task_name = request.form['name']
+#     description = request.form['description']
+#     due_date = request.form['due_date']
+#     new_task = tasks(task_name=task_name, description=description , due_date=due_date)
+#     db.session.add(new_task)
+#     db.session.commit()
+#     return redirect(url_for('index'))
+# @app.route('/delete', methods=['POST'])
+# def delete_task():
+#     if request.form['_method'] == 'DELETE':
+#         task_id = request.form['task_id']
+#         task = tasks.query.filter_by(task_id=task_id).first()
+#         db.session.delete(task)
+#         db.session.commit()
+#     return redirect(url_for('index'))
+# @app.route('/edit/<int:task_id>', methods=['GET'])
+# def edit_task(task_id):
+#     task = tasks.query.filter_by(task_id=task_id).first()
+#     if task:
+#         return render_template('edit.html', task=task)
+#     else:
+#         return redirect(url_for('index'))
+# @app.route('/update/<int:task_id>', methods=['POST'])
+# def update_task(task_id):
+#     task = tasks.query.filter_by(task_id=task_id).first()
+#     if task:
+#         task.task_name = request.form['task_name']
+#         task.description = request.form['description']
+#         task.due_date = request.form['due_date']
+#         db.session.commit()
+#     return redirect(url_for('index'))
 
 if __name__ == '__main__':
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    app.run(debug=True)
