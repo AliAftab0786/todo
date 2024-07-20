@@ -5,12 +5,16 @@ import logging
 import os
 
 app = Flask(__name__, template_folder='templates')
-app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///" + os.path.join(os.getcwd(), "todo.db")
+
+# Use an absolute path for the SQLite database
+db_path = os.path.join(os.getcwd(), "todo.db")
+app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{db_path}"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
 # Setup logging
 logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
 
 class tasks(db.Model):
     task_id = db.Column(db.Integer, primary_key=True)
@@ -20,13 +24,24 @@ class tasks(db.Model):
     created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
     updated_at = db.Column(db.DateTime, default=db.func.current_timestamp(), onupdate=db.func.current_timestamp())
 
+@app.before_request
+def setup():
+    try:
+        if not os.path.exists(db_path):
+            db.create_all()
+            logger.debug("Database created at: %s", db_path)
+        else:
+            logger.debug("Database already exists at: %s", db_path)
+    except Exception as e:
+        logger.error(f"Error during database setup: {e}")
+
 @app.route('/')
 def index():
     try:
         all_tasks = tasks.query.all()
         return render_template('index.html', tasks=all_tasks)
     except Exception as e:
-        logging.error(f"Error fetching tasks: {e}")
+        logger.error(f"Error fetching tasks: {e}")
         return "Internal Server Error", 500
 
 @app.route('/add', methods=['POST'])
@@ -41,7 +56,7 @@ def add():
         db.session.commit()
         return redirect(url_for('index'))
     except Exception as e:
-        logging.error(f"Error adding task: {e}")
+        logger.error(f"Error adding task: {e}")
         return "Internal Server Error", 500
 
 @app.route('/delete', methods=['POST'])
@@ -54,7 +69,7 @@ def delete_task():
             db.session.commit()
         return redirect(url_for('index'))
     except Exception as e:
-        logging.error(f"Error deleting task: {e}")
+        logger.error(f"Error deleting task: {e}")
         return "Internal Server Error", 500
 
 @app.route('/edit/<int:task_id>', methods=['GET'])
@@ -66,7 +81,7 @@ def edit_task(task_id):
         else:
             return redirect(url_for('index'))
     except Exception as e:
-        logging.error(f"Error editing task: {e}")
+        logger.error(f"Error editing task: {e}")
         return "Internal Server Error", 500
 
 @app.route('/update/<int:task_id>', methods=['POST'])
@@ -81,10 +96,8 @@ def update_task(task_id):
             db.session.commit()
         return redirect(url_for('index'))
     except Exception as e:
-        logging.error(f"Error updating task: {e}")
+        logger.error(f"Error updating task: {e}")
         return "Internal Server Error", 500
 
 if __name__ == '__main__':
-    with app.app_context():
-        db.create_all()
     app.run(debug=True, port=5001)
