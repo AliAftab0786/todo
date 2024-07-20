@@ -12,7 +12,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{db_path}"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
-# Setup logging
+# Set up logging
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
@@ -36,14 +36,20 @@ def setup():
 @app.route('/')
 def index():
     try:
-        task_id = 1
-        task_name = "request.form['name']"
-        description = "request.form['description']"
-        due_date_str = "27/10/4356"
-        due_date = datetime.strptime(due_date_str, '%Y-%m-%d')
-        new_task = tasks(task_id =task_id ,task_name=task_name, description=description, due_date=due_date)
-        db.session.add(new_task)
-        db.session.commit()
+        # # Dummy data for testing
+        # task_id = 1
+        # task_name = "Sample Task"
+        # description = "This is a sample description."
+        # due_date_str = "2024-10-27"  # Correct date format: YYYY-MM-DD
+        # due_date = datetime.strptime(due_date_str, '%Y-%m-%d')
+        
+        # # Check if the task already exists to prevent duplicate entries
+        # if not tasks.query.filter_by(task_id=task_id).first():
+        #     new_task = tasks(task_id=task_id, task_name=task_name, description=description, due_date=due_date)
+        #     db.session.add(new_task)
+        #     db.session.commit()
+        
+        # Fetch all tasks
         all_tasks = tasks.query.all()
         return render_template('index.html', tasks=all_tasks)
     except Exception as e:
@@ -56,13 +62,28 @@ def add():
         task_name = request.form['name']
         description = request.form['description']
         due_date_str = request.form['due_date']
+        
+        # Debugging prints (remove in production)
+        print(f"task_name: {task_name}")
+        print(f"description: {description}")
+        print(f"due_date_str: {due_date_str}")
+
+        # Parse due_date
         due_date = datetime.strptime(due_date_str, '%Y-%m-%d')
+        
+        # Create new task
         new_task = tasks(task_name=task_name, description=description, due_date=due_date)
+        
+        # Add and commit to database
         db.session.add(new_task)
         db.session.commit()
+        
         return redirect(url_for('index'))
+    
     except Exception as e:
         logger.error(f"Error adding task: {e}")
+        # Debugging prints (remove in production)
+        print(f"Exception: {e}")
         return "Internal Server Error", 500
 
 @app.route('/delete', methods=['POST'])
