@@ -12,7 +12,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{db_path}"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
-# Setup logging
+# Set up logging
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
@@ -62,13 +62,28 @@ def add():
         task_name = request.form['name']
         description = request.form['description']
         due_date_str = request.form['due_date']
+        
+        # Debugging prints (remove in production)
+        print(f"task_name: {task_name}")
+        print(f"description: {description}")
+        print(f"due_date_str: {due_date_str}")
+
+        # Parse due_date
         due_date = datetime.strptime(due_date_str, '%Y-%m-%d')
+        
+        # Create new task
         new_task = tasks(task_name=task_name, description=description, due_date=due_date)
+        
+        # Add and commit to database
         db.session.add(new_task)
         db.session.commit()
+        
         return redirect(url_for('index'))
+    
     except Exception as e:
         logger.error(f"Error adding task: {e}")
+        # Debugging prints (remove in production)
+        print(f"Exception: {e}")
         return "Internal Server Error", 500
 
 @app.route('/delete', methods=['POST'])
