@@ -21,8 +21,6 @@ class tasks(db.Model):
     task_name = db.Column(db.String(100), nullable=False)
     description = db.Column(db.Text, nullable=True)
     due_date = db.Column(db.DateTime, nullable=True)
-    created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
-    updated_at = db.Column(db.DateTime, default=db.func.current_timestamp(), onupdate=db.func.current_timestamp())
 
 @app.before_request
 def setup():
@@ -38,6 +36,20 @@ def setup():
 @app.route('/')
 def index():
     try:
+        # Dummy data for testing
+        task_id = 1
+        task_name = "Sample Task"
+        description = "This is a sample description."
+        due_date_str = "2024-10-27"  # Correct date format: YYYY-MM-DD
+        due_date = datetime.strptime(due_date_str, '%Y-%m-%d')
+        
+        # Check if the task already exists to prevent duplicate entries
+        if not tasks.query.filter_by(task_id=task_id).first():
+            new_task = tasks(task_id=task_id, task_name=task_name, description=description, due_date=due_date)
+            db.session.add(new_task)
+            db.session.commit()
+        
+        # Fetch all tasks
         all_tasks = tasks.query.all()
         return render_template('index.html', tasks=all_tasks)
     except Exception as e:
