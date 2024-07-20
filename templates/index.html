@@ -34,19 +34,19 @@
                 <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                     <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                         <tr class="bg-blue-600 text-white">
-                            <th scope="col" class="px-6 py-3">
+                            <th scope="col" class="px-6 py-3 text-center">
                                 ID
                             </th>
-                            <th scope="col" class="px-6 py-3">
+                            <th scope="col" class="px-6 py-3 text-center">
                                 Name
                             </th>
-                            <th scope="col" class="px-6 py-3">
+                            <th scope="col" class="px-6 py-3 text-center">
                                 Description
                             </th>
-                            <th scope="col" class="px-6 py-3">
+                            <th scope="col" class="px-6 py-3 text-center">
                                 Due Date
                             </th>
-                            <th scope="col" class="px-6 py-3">
+                            <th scope="col" class="px-6 py-3 text-center">
                                 Action
                             </th>
                         </tr>
@@ -75,12 +75,12 @@
                             </td>
                             <td class="px-6 py-4 flex gap-1">
                                 <!-- Delete Task Form -->
-                                <form action="#" method="post" onsubmit="return confirm('Are you sure you want to delete this task?');">
+                                <form action="/delete" method="post" onsubmit="return confirm('Are you sure you want to delete this task?');">
                                     <input type="hidden" name="task_id" value="{{ task.task_id }}">
                                     <input type="hidden" name="_method" value="DELETE">
                                     <button type="submit" class="text-black hover:text-white border border-black hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-3 py-2 text-center me-2 mb-2 dark:border-black-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-500 dark:focus:ring-blue-800">Delete</button>
                                 </form>
-                                <form action="#" method="get">
+                                <form action="/edit/{{task.task_id }}" method="get">
                                     <input type="hidden" name="task_id" value="{{ task.task_id }}">
                                     <button type="submit" class="text-black hover:text-white border border-black hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-3 py-2 text-center me-2 mb-2 dark:border-black-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-500 dark:focus:ring-blue-800">Edit</button>
                                 </form>
